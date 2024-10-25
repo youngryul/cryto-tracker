@@ -2,6 +2,9 @@ import React from 'react';
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 import Coins from "./routes/Coins";
+import {RouterProvider} from "react-router-dom";
+import router from "./Router";
+import {ReactQueryDevtools} from "react-query/devtools";
 
 // 전역으로 쓸 수 있는 스타일 컴포넌트
 const GlobalStyle = createGlobalStyle`
@@ -59,10 +62,14 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'Source Sans Pro', sans-serif;
     background-color: ${props => props.theme.bgColor};
-    color: ${props => props.theme.bgColor};
+    color: ${props => props.theme.textColor};
+    font-weight: 300;
+    line-height: 1.2;
+
   }
   a{
     text-decoration: none;
+    color: inherit;
   }
 `
 
@@ -70,7 +77,9 @@ const GlobalStyle = createGlobalStyle`
 function App() {
   return (
     <>
-      <GlobalStyle/>
+        <GlobalStyle/>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
 }

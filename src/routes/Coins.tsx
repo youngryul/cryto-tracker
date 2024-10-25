@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
+import {useQuery} from "react-query";
+import {fetchCoins} from "../api";
 
 // max-width 와 margin 0 auto를 주면 모바일 화면처럼 가운데에 위치한다.
 const Container = styled.div`
@@ -58,18 +60,20 @@ const Loader = styled.span`
 `;
 
 function Coins() {
-    const [coins, setCoins] = useState<CoinInterface[]>([]);
-    const [loading, setLoading] = useState(true);
+    // const [coins, setCoins] = useState<CoinInterface[]>([]);
+    // const [loading, setLoading] = useState(true);
+    //
+    // // useEffect 안에서 함수 즉시 실행 방법
+    // useEffect(() => {
+    //     (async () => {
+    //         const response = await fetch("https://api.coinpaprika.com/v1/coins");
+    //         const json = await response.json();
+    //         setCoins(json.slice(0, 100));
+    //         setLoading(false);
+    //     })();
+    // }, []);
 
-    // useEffect 안에서 함수 즉시 실행 방법
-    useEffect(() => {
-        (async () => {
-            const response = await fetch("https://api.coinpaprika.com/v1/coins");
-            const json = await response.json();
-            setCoins(json.slice(0, 100));
-            setLoading(false);
-        })();
-    }, []);
+    const {isLoading,data } = useQuery<CoinInterface[]>("allCoins", fetchCoins);
 
     return (
         <Container>
@@ -77,9 +81,9 @@ function Coins() {
                 <Title>코인</Title>
             </Header>
             {
-                loading ? <Loader>Loading...</Loader> :
+                isLoading ? <Loader>Loading...</Loader> :
                     <CoinsList>
-                    {coins.map((coin) => (
+                    {data?.slice(0,100).map((coin) => (
                         <Coin key={coin.id}>
                             <Link to={`/${coin.id}`} state={coin} >
                                 <Img src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`} />
