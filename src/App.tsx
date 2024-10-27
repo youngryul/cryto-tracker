@@ -1,10 +1,11 @@
 import React from 'react';
-import { createGlobalStyle } from "styled-components";
-import Router from "./Router";
-import Coins from "./routes/Coins";
-import {RouterProvider} from "react-router-dom";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
+import {Outlet, RouterProvider} from "react-router-dom";
 import router from "./Router";
 import {ReactQueryDevtools} from "react-query/devtools";
+import { darkTheme, lightTheme } from "./theme";
+import {useRecoilValue} from "recoil";
+import {isDarkAtom} from "./atom";
 
 // 전역으로 쓸 수 있는 스타일 컴포넌트
 const GlobalStyle = createGlobalStyle`
@@ -73,13 +74,23 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
+// export const IsDarkContext = createContext({
+//     isDark: false,
+//     toggleDark: () => {},
+// });
+
 // 유령 컴포넌트 <> </>
 function App() {
+    // const [isDark, setIsDark] = useState(false);
+    // const toggleDark = () => setIsDark((current) => !current);
+    const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
-        <GlobalStyle/>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={true} />
+        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+            <GlobalStyle />
+            <RouterProvider router={router} />
+            <ReactQueryDevtools initialIsOpen={true} />
+        </ThemeProvider>
     </>
   );
 }

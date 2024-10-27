@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import {Link, useOutletContext} from "react-router-dom";
 import styled from "styled-components";
-import {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {fetchCoins} from "../api";
+import {useSetRecoilState} from "recoil";
+import {isDarkAtom} from "../atom";
 
 // max-width 와 margin 0 auto를 주면 모바일 화면처럼 가운데에 위치한다.
 const Container = styled.div`
@@ -18,10 +20,11 @@ const Header = styled.header`
 `;
 const CoinsList = styled.ul``;
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
+    background-color: ${(props) => props.theme.cardBgColor};
+  color: ${(props) => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
+    border: 1px solid white;
   a {
     display: flex;
     align-items: center;
@@ -45,6 +48,10 @@ const Img = styled.img`
     margin-right: 10px;
 `;
 
+const Loader = styled.span`
+    text-align: center;
+`;
+
 interface CoinInterface {
     id: string,
     name: string,
@@ -55,9 +62,10 @@ interface CoinInterface {
     type: string,
 }
 
-const Loader = styled.span`
-    text-align: center;
-`;
+interface ToggleDarkType {
+    toggleDark: () => void;
+}
+
 
 function Coins() {
     // const [coins, setCoins] = useState<CoinInterface[]>([]);
@@ -74,11 +82,14 @@ function Coins() {
     // }, []);
 
     const {isLoading,data } = useQuery<CoinInterface[]>("allCoins", fetchCoins);
-
+    const setDarkAtom = useSetRecoilState(isDarkAtom);
+    const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
     return (
         <Container>
             <Header>
                 <Title>코인</Title>
+                <button onClick={toggleDarkAtom}>Toggle Mode</button>
+                {/*<button onClick={toggleDark}>Toggle Mode</button>*/}
             </Header>
             {
                 isLoading ? <Loader>Loading...</Loader> :
